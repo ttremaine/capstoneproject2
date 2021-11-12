@@ -5,23 +5,14 @@ require('dotenv').config({ path: './config.env' });
 const dal     = require('./db/dal.js');
 
 
-//port
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-    dal.connectToServer(function (err) {
-        if (err) console.error(err);
-    })
-    console.log('Running on port: ' + port);
-});
-
 
 // used to serve static files from public directory
 app.use(express.json);
 app.use(cors());
 //app.use(require('./routes/users'));
 
-//const path = require('path');
-//app.use(express.static(path.join(__dirname, 'src')));
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'client', 'build', )));
 
 // create user account
 app.get('/account/create/:name/:email/:password', function (req, res) {
@@ -111,4 +102,17 @@ app.get('/account/all', function (req, res) {
             console.log(docs);
             res.send(docs);
     });
+});
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+});
+
+//port
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+    dal.connectToServer(function (err) {
+        if (err) console.error(err);
+    })
+    console.log('Running on port: ' + port);
 });
